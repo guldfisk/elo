@@ -1,4 +1,5 @@
 import typing as t
+import random
 
 from abc import abstractmethod, ABC
 
@@ -20,17 +21,40 @@ class Eloed(ABC):
         pass
 
 
+E = t.TypeVar('E', bound = Eloed)
+
+
 def rescale(
-    eloeds: t.Sequence[Eloed],
-    average_rating: int = 1500,
-    reset_factor: float = 0.,
-) -> t.Iterable[t.Tuple[Eloed, int]]:
+    eloeds: t.Sequence[E],
+    average_rating: t.Optional[int] = None,
+    reset_factor: float = .5,
+) -> t.List[t.Tuple[E, int]]:
     old_average_rating = sum(eloed.elo for eloed in eloeds) / len(eloeds)
-    for eloed in eloeds:
-        yield eloed, int(
-            round(
-                (average_rating + eloed.elo - old_average_rating) * (1 - reset_factor)
-                + reset_factor * average_rating,
-                0,
+    average_rating = old_average_rating if average_rating is None else average_rating
+
+    new_ratings = [
+        [
+            eloed,
+            int(
+                round(
+                    (average_rating + eloed.elo - old_average_rating) * (1 - reset_factor)
+                    + reset_factor * average_rating,
+                    0,
+                )
             )
-        )
+        ] for eloed in
+        eloeds
+    ]
+
+    new_sum = sum(r for _, r in new_ratings)
+
+    total_target = int(average_rating * len(eloeds))
+
+    if new_sum > total_target:
+        for p in random.sample(new_ratings, new_sum - total_target):
+            p[1] -= 1
+    elif new_sum < total_target:
+        for p in random.sample(new_ratings, total_target - new_sum):
+            p[1] += 1
+
+    return new_ratings
