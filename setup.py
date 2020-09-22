@@ -10,12 +10,12 @@ def package_files(directory):
             paths.append(os.path.join('..', path, filename))
     return paths
 
+
 extra_files = package_files('elo')
 
 setup(
     name = 'elo',
     version = '1.0',
     packages = ['elo'],
-    package_data={'': extra_files},
-    include_package_data = True,
+    package_data = {'': extra_files},
 )
