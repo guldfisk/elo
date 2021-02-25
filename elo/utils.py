@@ -20,6 +20,15 @@ class Eloed(ABC):
     def elo(self) -> int:
         pass
 
+    @elo.setter
+    @abstractmethod
+    def elo(self, value: int) -> int:
+        pass
+
+
+def adjust_eloeds(winner: Eloed, loser: Eloed, k: int = 32):
+    winner.elo, loser.elo = adjusted_values(winner.elo, loser.elo, 1., k = k)
+
 
 E = t.TypeVar('E', bound = Eloed)
 
