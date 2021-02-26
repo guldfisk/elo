@@ -13,7 +13,7 @@ def adjusted_values(rating: int, versus_rating: int, score: float, k: int = 32) 
     return rating + gain, versus_rating - gain
 
 
-class Eloed(ABC):
+class Eloed(t.Protocol):
 
     @property
     @abstractmethod
@@ -67,3 +67,12 @@ def rescale(
             p[1] += 1
 
     return new_ratings
+
+
+def rescale_eloeds(
+    eloeds: t.Sequence[E],
+    average_rating: t.Optional[int] = None,
+    reset_factor: float = .5,
+) -> None:
+    for eloed, new_rating in rescale(eloeds, average_rating, reset_factor):
+        eloed.elo = new_rating
