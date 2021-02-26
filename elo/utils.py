@@ -1,7 +1,7 @@
 import typing as t
 import random
 
-from abc import abstractmethod, ABC
+from abc import abstractmethod
 
 
 def expected_win_rate(rating: int, versus_rating: int) -> float:
@@ -9,7 +9,7 @@ def expected_win_rate(rating: int, versus_rating: int) -> float:
 
 
 def adjusted_values(rating: int, versus_rating: int, score: float, k: int = 32) -> t.Tuple[int, int]:
-    gain = int(k * (score - expected_win_rate(rating, versus_rating)))
+    gain = min(max(int(k * (score - expected_win_rate(rating, versus_rating))), 1), versus_rating)
     return rating + gain, versus_rating - gain
 
 
@@ -26,8 +26,8 @@ class Eloed(t.Protocol):
         pass
 
 
-def adjust_eloeds(winner: Eloed, loser: Eloed, k: int = 32):
-    winner.elo, loser.elo = adjusted_values(winner.elo, loser.elo, 1., k = k)
+def adjust_eloeds(winner: int, loser: int, k: int = 32) -> None:
+    winner.elo, loser.elo = adjusted_values(winner.elo, loser.elo, 1, k = k)
 
 
 E = t.TypeVar('E', bound = Eloed)
