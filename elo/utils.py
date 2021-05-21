@@ -26,7 +26,7 @@ class Eloed(t.Protocol):
         pass
 
 
-def adjust_eloeds(winner: int, loser: int, k: int = 32) -> None:
+def adjust_eloeds(winner: Eloed, loser: Eloed, k: int = 32) -> None:
     winner.elo, loser.elo = adjusted_values(winner.elo, loser.elo, 1, k = k)
 
 
